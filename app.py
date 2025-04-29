@@ -42,6 +42,20 @@ app.add_middleware(
 NEWS_FILE = "news_data.jsonl"
 STOP_WORDS = ["stop", "exit", "quit"]
 
+from fastapi.responses import HTMLResponse
+import aiofiles
+from fastapi.staticfiles import StaticFiles
+
+# Serve index.html from root
+@app.get("/", response_class=HTMLResponse)
+async def serve_index():
+    async with aiofiles.open("index.html", mode="r") as f:
+        return await f.read()
+
+# (Optional) Serve all static files if needed
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+
 # Load JSONL news articles
 def load_news():
     with open(NEWS_FILE, 'r', encoding='utf-8') as f:
