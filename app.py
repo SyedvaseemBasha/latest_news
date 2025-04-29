@@ -1,29 +1,3 @@
-
-# from fastapi import FastAPI
-# import json
-# import pyttsx3
-# import threading
-# from llm_utils import rephrase_content
-# from fetch_news import fetch_all_articles
-
-# app = FastAPI()
-
-# @app.get("/latestnews")
-# def speak_latest_news():
-#     articles = fetch_all_articles()
-#     top_contents = [a['content'] for a in articles[:5] if a.get('content')]
-
-#     def speak(news_list):
-#         engine = pyttsx3.init()
-#         engine.setProperty('rate', 150)
-#         for idx, news in enumerate(news_list, 1):
-#             engine.say(f"News {idx}: {news}")
-#             engine.runAndWait()
-
-#     thread = threading.Thread(target=speak, args=(top_contents,))
-#     thread.start()
-#     return {"status": "Speaking top 5 news in background."}
-
 # app.py
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
