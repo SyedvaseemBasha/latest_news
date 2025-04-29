@@ -48,8 +48,9 @@
           speak("Stopping now.");
           return;
         }
-
-        const response = await fetch(`/chat?q=${encodeURIComponent(query)}`);
+        const response = await fetch(`https://latest-news-c3qo.onrender.com/chat?q=${encodeURIComponent(query)}`);
+  
+        // const response = await fetch(`/chat?q=${encodeURIComponent(query)}`);
         const data = await response.json();
         speak(data.response);
       }
