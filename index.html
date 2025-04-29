@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +18,7 @@
   <script>
     let synth = window.speechSynthesis;
     let utterance;
+    const API_BASE = "https://latest-news-c3qo.onrender.com";
 
     function speak(text) {
       stopSpeaking();
@@ -43,16 +43,24 @@
         const query = event.results[0][0].transcript.toLowerCase();
         document.getElementById('status').textContent = `You said: "${query}"`;
 
+        if (!query) {
+          speak("Sorry, I didn't catch that.");
+          return;
+        }
+
         if (query.includes("stop") || query.includes("exit")) {
           stopSpeaking();
           speak("Stopping now.");
           return;
         }
-        const response = await fetch(`https://latest-news-c3qo.onrender.com/chat?q=${encodeURIComponent(query)}`);
-  
-        // const response = await fetch(`/chat?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        speak(data.response);
+
+        try {
+          const response = await fetch(`${API_BASE}/chat?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+          speak(data.response);
+        } catch (err) {
+          speak("Sorry, I had trouble connecting to the server.");
+        }
       }
 
       recognition.onerror = function(err) {
