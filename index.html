@@ -1,0 +1,63 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Voice Assistant</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f5f5f5; }
+    button { padding: 1rem; font-size: 1rem; margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>🌐 News Voice Assistant</h1>
+  <button onclick="startListening()">🎤 Talk to Assistant</button>
+  <button onclick="stopSpeaking()">⏹️ Stop</button>
+  <p id="status"></p>
+
+  <script>
+    let synth = window.speechSynthesis;
+    let utterance;
+
+    function speak(text) {
+      stopSpeaking();
+      utterance = new SpeechSynthesisUtterance(text);
+      synth.speak(utterance);
+    }
+
+    function stopSpeaking() {
+      if (synth.speaking) synth.cancel();
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      document.getElementById('status').textContent = "Listening...";
+      recognition.start();
+
+      recognition.onresult = async function(event) {
+        const query = event.results[0][0].transcript.toLowerCase();
+        document.getElementById('status').textContent = `You said: "${query}"`;
+
+        if (query.includes("stop") || query.includes("exit")) {
+          stopSpeaking();
+          speak("Stopping now.");
+          return;
+        }
+
+        const response = await fetch(`/chat?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        speak(data.response);
+      }
+
+      recognition.onerror = function(err) {
+        document.getElementById('status').textContent = "Error: " + err.error;
+      }
+    }
+  </script>
+</body>
+</html>
